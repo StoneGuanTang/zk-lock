@@ -10,13 +10,13 @@ import java.util.concurrent.Executors;
 /**
  * create by tgss on 2021/4/28 19:54
  **/
-public class App {
+public class Demo {
 
-    private ZooKeeper zk;
+    private ZkLock zkLock;
 
     @Before
     public void init() {
-        this.zk = ZkUtil.getZk();
+        this.zkLock = new ZkLock(ZkUtil.getZk());
     }
 
     @Test
@@ -25,7 +25,7 @@ public class App {
         for (int i = 0; i < 10; i++) {
             pool.execute(() -> {
                 String threadName = Thread.currentThread().getName();
-                Lock lock = new LockImpl(zk, threadName);
+                Lock lock = zkLock.getLok(threadName);
                 lock.tryLock();
                 System.out.println(threadName + "do somethings");
                 lock.unlock();
